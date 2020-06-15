@@ -1,31 +1,31 @@
 #!/bin/bash
-
+# Please note all 'Casper' mentions were changed to 'jamfpro' and all mentions of 'JSS' is now 'jamf'
 #
 # User-editable variables
 #
 
 # For the fileURL variable, put the complete address 
-# of the zipped Casper QuickAdd installer package
+# of the zipped JamfPro QuickAdd installer package
 
 fileURL="http://server_name_here.domain.com/quickadd_name_goes_here.zip"
 
-# For the jss_server_address variable, put the complete 
-# fully qualified domain name address of your Casper server
+# For the jamf_server_address variable, put the complete 
+# fully qualified domain name address of your JamfPro server
 
-jss_server_address="server_name_here.domain.com"
+jamf_server_address="server_name_here.domain.com"
 
-# For the jss_server_address variable, put the port number 
-# of your Casper server. This is usually 8443; change as
+# For the jamf_server_address variable, put the port number 
+# of your JamfPro server. This is usually 8443; change as
 # appropriate.
 
-jss_server_port="8443"
+jamf_server_port="8443"
 
 # For the log_location variable, put the preferred 
 # location of the log file for this script. If you 
 # don't have a preference, using the default setting
 # should be fine.
 
-log_location="/var/log/caspercheck.log"
+log_location="/var/log/jamfprocheck.log"
 
 #
 # The variables below this line should not need to be edited.
@@ -34,7 +34,7 @@ log_location="/var/log/caspercheck.log"
 
 quickadd_dir="/var/root/quickadd"
 quickadd_zip="$quickadd_dir/quickadd.zip"
-quickadd_installer="$quickadd_dir/casper.pkg"
+quickadd_installer="$quickadd_dir/jamfpro.pkg"
 quickadd_timestamp="$quickadd_dir/quickadd_timestamp"
 
 #
@@ -127,17 +127,17 @@ update_quickadd () {
     
     modDate=$(myCurl --head $fileURL 2>/dev/null | awk -F': ' '/Last-Modified/{print $2}')
 
-    # Downloading Casper agent installer
+    # Downloading JamfPro agent installer
     
-    ScriptLogging "Downloading Casper agent installer from server."
+    ScriptLogging "Downloading JamfPro agent installer from server."
     
     myCurl --output "$quickadd_zip" $fileURL
     
     # Check to make sure download occurred
     
     if [[ ! -f "$quickadd_zip" ]]; then
-        ScriptLogging "$quickadd_zip not found. Exiting CasperCheck."
-        ScriptLogging "======== CasperCheck Finished ========"
+        ScriptLogging "$quickadd_zip not found. Exiting JamfProCheck."
+        ScriptLogging "======== JamfProCheck Finished ========"
         exit 0
     fi
     
@@ -148,19 +148,19 @@ update_quickadd () {
     if [ "$zipfile_chk" -eq 0 ]; then
        ScriptLogging "Downloaded zip file appears to be a valid zip archive. Proceeding."
     else
-       ScriptLogging "Downloaded zip file appears to be corrupted. Exiting CasperCheck."
-       ScriptLogging "======== CasperCheck Finished ========"
+       ScriptLogging "Downloaded zip file appears to be corrupted. Exiting JamfProCheck."
+       ScriptLogging "======== JamfPr0Check Finished ========"
        rm "$quickadd_zip"
        exit 0
     fi
         
-    # Unzip the Casper agent install into the destination directory
+    # Unzip the JamfPro agent install into the destination directory
     # and remove the __MACOSX directory, which is created as part of
     # the uncompression process from the destination directory.
     
     /usr/bin/unzip "$quickadd_zip" -d "$quickadd_dir";/bin/rm -rf "$quickadd_dir"/__MACOSX
     
-    # Rename newly-downloaded installer to be casper.pkg
+    # Rename newly-downloaded installer to be jamfpro.pkg
     
     mv "$(/usr/bin/find $quickadd_dir -maxdepth 1 \( -iname \*\.pkg -o -iname \*\.mpkg \))" "$quickadd_installer"
     
@@ -170,7 +170,7 @@ update_quickadd () {
     fi
     
     # Add the quickadd_timestamp file to the destination directory. 
-    # This file is used to help verify if the current Casper agent 
+    # This file is used to help verify if the current JamfPro agent 
     # installer is already cached on the machine.
     
     if [[ ! -f "$quickadd_timestamp" ]]; then
@@ -184,13 +184,13 @@ CheckTomcat (){
 # Verifies that the JSS's Tomcat service is responding via its assigned port.
 
 
-tomcat_chk=`nc -z -w 5 $jss_server_address $jss_server_port > /dev/null; echo $?`
+tomcat_chk=`nc -z -w 5 $jamf_server_address $jamf_server_port > /dev/null; echo $?`
 
 if [ "$tomcat_chk" -eq 0 ]; then
-       ScriptLogging "Machine can connect to $jss_server_address over port $jss_server_port. Proceeding."
+       ScriptLogging "Machine can connect to $jamf_server_address over port $jamf_server_port. Proceeding."
 else
-       ScriptLogging "Machine cannot connect to $jss_server_address over port $jss_server_port. Exiting CasperCheck."
-       ScriptLogging "======== CasperCheck Finished ========"
+       ScriptLogging "Machine cannot connect to $jss_server_address over port $jss_server_port. Exiting JamfProCheck."
+       ScriptLogging "======== JamfProCheck Finished ========"
        exit 0
 fi
 
