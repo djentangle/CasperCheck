@@ -92,7 +92,7 @@ CheckSiteNetwork (){
   
 
   site_network="False"
-  ping=`host -W .5 $jss_server_address`
+  ping=`host -W .5 $jamf_server_address`
 
   # If the ping fails - site_network="False"
   [[ $? -eq 0 ]] && site_network="True"
@@ -103,7 +103,7 @@ CheckSiteNetwork (){
 
 #
 # The update_quickadd function checks the timestamp of the fileURL variable and compares it against a locally
-# cached timestamp. If the hosted file's timestamp is newer, then the Casper 
+# cached timestamp. If the hosted file's timestamp is newer, then the JamfPro 
 # QuickAdd installer gets downloaded and extracted into the target directory.
 #
 # This function uses the myCurl function defined at the top of the script.
@@ -181,7 +181,7 @@ update_quickadd () {
 
 CheckTomcat (){
  
-# Verifies that the JSS's Tomcat service is responding via its assigned port.
+# Verifies that the Jamf's Tomcat service is responding via its assigned port.
 
 
 tomcat_chk=`nc -z -w 5 $jamf_server_address $jamf_server_port > /dev/null; echo $?`
@@ -189,7 +189,7 @@ tomcat_chk=`nc -z -w 5 $jamf_server_address $jamf_server_port > /dev/null; echo 
 if [ "$tomcat_chk" -eq 0 ]; then
        ScriptLogging "Machine can connect to $jamf_server_address over port $jamf_server_port. Proceeding."
 else
-       ScriptLogging "Machine cannot connect to $jss_server_address over port $jss_server_port. Exiting JamfProCheck."
+       ScriptLogging "Machine cannot connect to $jamf_server_address over port $jamf_server_port. Exiting JamfProCheck."
        ScriptLogging "======== JamfProCheck Finished ========"
        exit 0
 fi
@@ -198,7 +198,7 @@ fi
 
 CheckInstaller (){
  
-# Compare timestamps and update the jamfpro agent 
+# Compare timestamps and update the JamfPro agent 
 # installer if needed.
 
     modDate=$(myCurl --head $fileURL 2>/dev/null | awk -F': ' '/Last-Modified/{print $2}')
@@ -208,7 +208,7 @@ if [[ -f "$quickadd_timestamp" ]]; then
     
     
     if [[ "$cachedDate" == "$modDate" ]]; then
-        ScriptLogging "Current jamfpro installer already cached."
+        ScriptLogging "Current JamfPro installer already cached."
     else
         update_quickadd
     fi
@@ -257,12 +257,12 @@ InstallJamfPro () {
     ScriptLogging "JamfPro agent has been installed."
  fi
  
-## Jaqueline stopped name ##
+
 }
 
-CheckCasper () {
+CheckJamfPro () {
 
-  #  CheckCasper function adapted from Facebook's jamf_verify.sh script.
+  #  CheckJamfPro function adapted from Facebook's jamf_verify.sh script.
   #  jamf_verify script available on Facebook's IT-CPE Github repo:
   #  Link: https://github.com/facebook/IT-CPE
 
@@ -271,8 +271,8 @@ CheckCasper () {
   # Checking for the jamf binary
   CheckBinary
   if [[ "$jamf_binary" == "" ]]; then
-    ScriptLogging "Casper's jamf binary is missing. It needs to be reinstalled."
-    InstallCasper
+    ScriptLogging "JamfPro's jamf binary is missing. It needs to be reinstalled."
+    InstallJamfPro
     CheckBinary
   fi
 
@@ -282,21 +282,21 @@ CheckCasper () {
   /usr/sbin/chown root:wheel $jamf_binary
   /bin/chmod 755 $jamf_binary
   
-  # Verifies that the JSS is responding to a communication query 
-  # by the Casper agent. If the communication check returns a result
+  # Verifies that the jamf is responding to a communication query 
+  # by the JamfPro agent. If the communication check returns a result
   # of anything greater than zero, the communication check has failed.
-  # If the communication check fails, reinstall the Casper agent using
+  # If the communication check fails, reinstall the JamfPro agent using
   # the cached installer.
 
 
-  jss_comm_chk=`$jamf_binary checkJSSConnection > /dev/null; echo $?`
+  jamf_comm_chk=`$jamf_binary checkJamfConnection > /dev/null; echo $?`
 
-  if [[ "$jss_comm_chk" -eq 0 ]]; then
-       ScriptLogging "Machine can connect to the JSS on $jss_server_address."
-  elif [[ "$jss_comm_chk" -gt 0 ]]; then
-       ScriptLogging "Machine cannot connect to the JSS on $jss_server_address."
-       ScriptLogging "Reinstalling Casper agent to fix problem of Casper not being able to communicate with the JSS."
-       InstallCasper
+  if [[ "$jamf_comm_chk" -eq 0 ]]; then
+       ScriptLogging "Machine can connect to the jamf on $jamf_server_address."
+  elif [[ "$jamf_comm_chk" -gt 0 ]]; then
+       ScriptLogging "Machine cannot connect to the jamf on $jamf_server_address."
+       ScriptLogging "Reinstalling JamfPro agent to fix problem of JamfPro not being able to communicate with the jamf."
+       InstallJamfPro
        CheckBinary
   fi
 
@@ -305,10 +305,10 @@ CheckCasper () {
   # being triggered has different options than the policy
   # described below:
   #
-  # Trigger: iscasperup
-  # Plan: Run Script iscasperonline.sh
+  # Trigger: isjamfup
+  # Plan: Run Script isjamfonline.sh
   # 
-  # The iscasperonline.sh script contains the following:
+  # The isjamfonline.sh script contains the following:
   #
   # | #!/bin/sh
   # |
@@ -318,19 +318,19 @@ CheckCasper () {
   #
 
   
-  jamf_policy_chk=`$jamf_binary policy -trigger iscasperup | grep "Script result: up"`
+  jamf_policy_chk=`$jamf_binary policy -trigger isjamfproup | grep "Script result: up"`
 
   # If the machine can run the specified policy, exit the script.
 
   if [[ -n "$jamf_policy_chk" ]]; then
-    ScriptLogging "Casper enabled and able to run policies"
+    ScriptLogging "JamfPro enabled and able to run policies"
 
   # If the machine cannot run the specified policy, 
-  # reinstall the Casper agent using the cached installer.
+  # reinstall the JamfPro agent using the cached installer.
 
   elif [[ ! -n "$jamf_policy_chk" ]]; then
-    ScriptLogging "Reinstalling Casper agent to fix problem of Casper not being able to run policies"
-    InstallCasper
+    ScriptLogging "Reinstalling JamfPro agent to fix problem of JamfPro not being able to run policies"
+    InstallJamfPro
     CheckBinary
   fi
 
@@ -345,14 +345,14 @@ CheckCasper () {
 # The functions and variables defined above are used
 # by the section below to check if the network connection
 # is live, if the machine is on a network where
-# the Casper JSS is accessible, and if the Casper agent on the
-# machine can contact the JSS and run a policy.
+# the JamfPro jamf is accessible, and if the JamfPro agent on the
+# machine can contact the jamf and run a policy.
 #
-# If the Casper agent on the machine cannot run a policy, the appropriate
-# functions run and repair the Casper agent on the machine.
+# If the JamfPro agent on the machine cannot run a policy, the appropriate
+# functions run and repair the JamfPro agent on the machine.
 #
 
-ScriptLogging "======== Starting CasperCheck ========"
+ScriptLogging "======== Starting JamfProCheck ========"
 
 # Wait up to 60 minutes for a network connection to become 
 # available which doesn't use a loopback address. This 
@@ -379,7 +379,7 @@ done
 # the script will exit.
 
 if [[ "${NETWORKUP}" != "-YES-" ]]; then
-   ScriptLogging "Network connection appears to be offline. Exiting CasperCheck."
+   ScriptLogging "Network connection appears to be offline. Exiting JamfProCheck."
 fi
    
 
@@ -392,7 +392,7 @@ if [[ "${NETWORKUP}" == "-YES-" ]]; then
   CheckSiteNetwork
 
   if [[ "$site_network" == "False" ]]; then
-    ScriptLogging "Unable to verify access to site network. Exiting CasperCheck."
+    ScriptLogging "Unable to verify access to site network. Exiting JamfProCheck."
   fi 
 
 
@@ -400,11 +400,11 @@ if [[ "${NETWORKUP}" == "-YES-" ]]; then
     ScriptLogging "Access to site network verified"
     CheckTomcat
     CheckInstaller
-    CheckCasper
+    CheckJamfPro
   fi
 
 fi
 
-ScriptLogging "======== CasperCheck Finished ========"
+ScriptLogging "======== JamfProCheck Finished ========"
 
 exit 0
