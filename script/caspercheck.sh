@@ -198,7 +198,7 @@ fi
 
 CheckInstaller (){
  
-# Compare timestamps and update the Casper agent
+# Compare timestamps and update the jamfpro agent 
 # installer if needed.
 
     modDate=$(myCurl --head $fileURL 2>/dev/null | awk -F': ' '/Last-Modified/{print $2}')
@@ -208,7 +208,7 @@ if [[ -f "$quickadd_timestamp" ]]; then
     
     
     if [[ "$cachedDate" == "$modDate" ]]; then
-        ScriptLogging "Current Casper installer already cached."
+        ScriptLogging "Current jamfpro installer already cached."
     else
         update_quickadd
     fi
@@ -223,7 +223,7 @@ CheckBinary (){
 # Identify location of jamf binary.
 #
 # If the jamf binary is not found, this check will return a
-# null value. This null value is used by the CheckCasper
+# null value. This null value is used by the CheckJamfPro
 # function, in the "Checking for the jamf binary" section
 # of the function.
 
@@ -239,25 +239,25 @@ jamf_binary=`/usr/bin/which jamf`
 
 }
 
-InstallCasper () {
+InstallJamfPro () {
 
- # Check for the cached Casper QuickAdd installer and run it
- # to fix problems with Casper being able to communicate with
- # the Casper server
+ # Check for the cached JamfPro QuickAdd installer and run it
+ # to fix problems with JamfPro being able to communicate with
+ # the JamfPro server
  
  if [[ ! -e "$quickadd_installer" ]] ; then
-    ScriptLogging "Casper installer is missing. Downloading."
+    ScriptLogging "JamfPro installer is missing. Downloading."
     /bin/rm -rf "$quickadd_timestamp"
     update_quickadd
  fi
  
   if [[ -e "$quickadd_installer" ]] ; then
-    ScriptLogging "Casper installer is present. Installing."
+    ScriptLogging "JamfPro installer is present. Installing."
     /usr/sbin/installer -dumplog -verbose -pkg "$quickadd_installer" -target /
-    ScriptLogging "Casper agent has been installed."
+    ScriptLogging "JamfPro agent has been installed."
  fi
  
-
+## Jaqueline stopped name ##
 }
 
 CheckCasper () {
