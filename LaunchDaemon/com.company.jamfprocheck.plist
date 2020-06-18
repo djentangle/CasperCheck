@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>com.company.caspercheck</string>
+	<string>com.company.jamfprocheck</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>sh</string>
-		<string>/Library/Scripts/caspercheck.sh</string>
+		<string>/Library/Scripts/jamfprocheck.sh</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
