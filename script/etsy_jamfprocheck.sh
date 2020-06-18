@@ -6,18 +6,18 @@
 # For the fileURL variable, put the complete address 
 # of the zipped JamfPro QuickAdd installer package
 
-fileURL="http://server_name_here.domain.com/quickadd_name_goes_here.zip"
+fileURL="https://extfiles.etsy.com/corp/42epq1n5.zip"
 
 # For the jamf_server_address variable, put the complete 
 # fully qualified domain name address of your JamfPro server
 
-jamf_server_address="server_name_here.domain.com"
+jamf_server_address="scoobydoo.etsymystery.com"
 
 # For the jamf_server_address variable, put the port number 
 # of your JamfPro server. This is usually 8443; change as
 # appropriate.
 
-jamf_server_port="8443"
+jamf_server_port="443"
 
 # For the log_location variable, put the preferred 
 # location of the log file for this script. If you 
@@ -32,8 +32,8 @@ log_location="/var/log/jamfprocheck.log"
 #
 
 quickadd_dir="/var/root/quickadd"
-quickadd_zip="$quickadd_dir/quickadd.zip"
-quickadd_installer="$quickadd_dir/jamfpro.pkg"
+quickadd_zip="$quickadd_dir/42epq1n5.zip"
+quickadd_installer="$quickadd_dir/42epq1n5.pkg"
 quickadd_timestamp="$quickadd_dir/quickadd_timestamp"
 
 #
