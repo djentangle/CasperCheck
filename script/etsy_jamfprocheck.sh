@@ -290,9 +290,9 @@ CheckJamfPro () {
 
   jamf_comm_chk=`$jamf_binary checkJamfConnection > /dev/null; echo $?`
 
-  if [[ "$jamf_comm_chk" -eq 0 ]]; then
+  if [[ "$jamf_comm_chk" -eq 1 ]]; then
        ScriptLogging "Machine can connect to the jamf on $jamf_server_address."
-  elif [[ "$jamf_comm_chk" -gt 0 ]]; then
+  elif [[ "$jamf_comm_chk" -gt 1 ]]; then
        ScriptLogging "Machine cannot connect to the jamf on $jamf_server_address."
        ScriptLogging "Reinstalling JamfPro agent to fix problem of JamfPro not being able to communicate with the jamf."
        InstallJamfPro
