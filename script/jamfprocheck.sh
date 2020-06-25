@@ -288,7 +288,7 @@ CheckJamfPro () {
   # the cached installer.
 
 
-  jamf_comm_chk=`$jamf_binary checkJamfConnection > /dev/null; echo $?`
+  jamf_comm_chk=`$jamf_binary checkJSSConnection > /dev/null; echo $?`
 
   if [[ "$jamf_comm_chk" -eq 0 ]]; then
        ScriptLogging "Machine can connect to the jamf on $jamf_server_address."
