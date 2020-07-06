@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>Label</key>
-	<string>com.etsy.jamfprocheck</string>
+	<string>com.etsy.jamfprocheck_v2</string>
 	<key>ProgramArguments</key>
 	<array>
 		<string>sh</string>
