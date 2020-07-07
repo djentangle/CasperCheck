@@ -6,12 +6,17 @@
 	<string>com.company.jamfprocheck</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>sh</string>
+		<string>/bin/sh</string>
 		<string>/Library/Scripts/jamfprocheck.sh</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
-	<key>StartInterval</key>
-	<integer>590400</integer>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>12</integer>
+		<key>Minute</key>
+		<integer>00</integer>
+	</dict>
 </dict>
 </plist>
