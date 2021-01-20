@@ -6,7 +6,8 @@
 # For the fileURL variable, put the complete address 
 # of the zipped JamfPro QuickAdd installer package
 
-fileURL="https://extfiles.etsy.com/corp/42epq1n5.zip"
+fileURL="https://storage.googleapis.com/etsy-jamfpro-prod/42epq1n5.zip"
+
 
 # For the jamf_server_address variable, put the complete 
 # fully qualified domain name address of your JamfPro server
